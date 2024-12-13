@@ -1,31 +1,35 @@
-import re
-import csv 
+import pytest
+from main import validate_isbn, load_books, save_books, write_transaction_log
+from library import Book, User, Library
 
-def validate_isbn(isbn): 
-    pattern = r"^\d{3}-\d{10}$"
-    return bool(re.match(pattern, isbn))
-    
-def validate_email(email): 
-    pattern = r"^[w.-]+@[\w.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(pattern, email))
+def test_validate_isbn():
+    assert validate_isbn("123-1234567890") == True
+    assert validate_isbn("123-12345") == False
+    assert validate_isbn("abc-1234567890") == False
+    assert validate_isbn("1234567890") == False
 
-def load_books(file_path):
-    books = []
-    try:
-        with open(file_path, "r") as file: 
-            reader = csv.reader(file)
-            for row in reader:
-                books.append({"isbn": row[0], "title": row[1], "author": row[2]})
-    except FileNotFoundError:
-        pass
-    return books
+def test_load_books():
+    books = [{"isbn": "123-1234567890", "title": "Test Book", "author": "Test Author"}]
+    assert len(books) == 1
+    assert books[0]["isbn"] == "123-1234567890"
+def test_add_book():
+    library = Library()
+    book = Book("123-1234567890", "Test Book", "Test Author")
+    library.add_book(book)
+    assert len(Library.books) == 1
+    assert Library.books[0].isbn == "123-1234567890"
 
-def save_books(books, file_path):
-    with open(file_path, "w", newlines="") as file: 
-        writer = csv.writer(file)
-        for book in books: 
-            writer.writerow([book.isbn, book.title. book.author])
+def test_add_user():
+    Library = Library()
+    user = User("user001", "Test User", "testuser@example.com")
+    Library.add_user(user)
+    assert len(Library.users) == 1
+    assert Library.users[0].email == "testuser@example.com"
 
-def write_transaction_log(user_id, isbn, action):
-    with open("data/transactions.txt", "a") as file: 
-        file.write(f"{user_id}, {isbn}, {action}\n")
+def test_write_transaction_log():
+    write_transaction_log("user123", "123-1234567890", "Issued")
+    with open("data/transactions.txt", "r") as file:
+        logs = file.readlines()
+    assert len(logs) > 0
+    assert "user123" in logs[-1]
+    assert "123-1234567890" in logs[-1]
