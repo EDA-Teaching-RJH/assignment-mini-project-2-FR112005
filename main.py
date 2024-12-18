@@ -1,15 +1,15 @@
-import re
-import csv
+import re #regular expressions library 
+import csv #file I/O 
 import os
-from library import Book, User, Library
+from library import Book, User, Library #custom library import #object orientated programming 
 
-def validate_isbn(isbn):
+def validate_isbn(isbn): #regular expressions library 
     return bool(re.match(r"^\d{3}-\d{10}$", isbn))
 
-def validate_email(email):
+def validate_email(email): #regular expressions 
     return bool(re.match(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$", email))
 
-def load_books(file_path):
+def load_books(file_path): #file I/O 
     try:
         with open(file_path, "r") as file:
             return [{"isbn": row[0], "title": row[1], "author": row[2]} for row in csv.reader(file)][1:]
@@ -17,7 +17,7 @@ def load_books(file_path):
         print(f"File {file_path} not found.")
         return []
 
-def save_books(books, file_path):
+def save_books(books, file_path): #file I/O 
     with open(file_path, "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(["isbn", "title", "author"])
@@ -40,7 +40,7 @@ if not os.path.exists(books_file_path):
 for book_data in load_books(books_file_path):
     library.add_book(Book(book_data["isbn"], book_data["title"], book_data["author"]))
 
-def main_menu():
+def main_menu(): #above and beyond 
     actions = {
         "1": add_book,
         "2": add_user,
@@ -51,7 +51,7 @@ def main_menu():
         "7": exit_program
     }
 
-    while True:
+    while True: #above and beyond 
         print("\nLibrary Management System")
         print("1. Add Book")
         print("2. Add User")
@@ -65,12 +65,12 @@ def main_menu():
         if choice in actions:
             actions[choice]()
         else:
-            print("Invalid choice. Please try again.")
+            print("Invalid choice. Please try again.") #testing 
 
 def add_book():
     isbn = input("Enter ISBN (format: XXX-XXXXXXXXXX): ")
-    if not validate_isbn(isbn):
-        print("Invalid ISBN format!")
+    if not validate_isbn(isbn): #testing 
+        print("Invalid ISBN format!") #testing 
         return
 
     title = input("Enter the book title: ")
